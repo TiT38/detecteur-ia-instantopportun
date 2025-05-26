@@ -4,165 +4,136 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Détecteur IA - L'Instant Opportun</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #f0f8ff, #e6e6fa); }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        textarea { width: 100%; height: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical; }
+        button { background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result { text-align: center; padding: 20px; }
+        .score { font-size: 48px; font-weight: bold; margin-bottom: 10px; }
+        .red { color: #dc2626; }
+        .yellow { color: #d97706; }
+        .green { color: #059669; }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState } = React;
-        const { AlertCircle, CheckCircle, Eye, FileText, TrendingUp } = lucide;
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Détecteur de Texte IA</h1>
+            <p>Analysez vos textes pour détecter s'ils ont été générés par une intelligence artificielle</p>
+            <div style="color: #8b5cf6; font-weight: bold;">L'Instant Opportun</div>
+        </div>
 
-        const AITextDetector = () => {
-            const [text, setText] = useState('');
-            const [analysis, setAnalysis] = useState(null);
-            const [isAnalyzing, setIsAnalyzing] = useState(false);
+        <div class="card">
+            <h2>📝 Texte à analyser</h2>
+            <textarea id="textInput" placeholder="Collez ici le texte que vous souhaitez analyser. Plus le texte est long, plus l'analyse sera précise..."></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span id="wordCount">0 mots</span>
+                <button onclick="analyzeText()" id="analyzeBtn">Analyser le texte</button>
+            </div>
+        </div>
 
-            const analyzeText = (inputText) => {
-                if (!inputText.trim()) return null;
+        <div class="card" id="results" style="display: none;">
+            <div class="result">
+                <div class="score" id="score">0%</div>
+                <div>Probabilité de génération par IA</div>
+                <div style="margin-top: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+                        <div>
+                            <h3>📊 Statistiques</h3>
+                            <div id="stats"></div>
+                        </div>
+                        <div>
+                            <h3>⚠️ Indicateurs</h3>
+                            <div id="indicators"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const wordCount = document.getElementById('wordCount');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const results = document.getElementById('results');
+        const score = document.getElementById('score');
+        const stats = document.getElementById('stats');
+        const indicators = document.getElementById('indicators');
+
+        textInput.addEventListener('input', function() {
+            const words = this.value.split(/\s+/).filter(w => w.length > 0);
+            wordCount.textContent = words.length + ' mots';
+        });
+
+        function analyzeText() {
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            analyzeBtn.textContent = 'Analyse en cours...';
+            analyzeBtn.disabled = true;
+
+            setTimeout(function() {
+                const words = text.split(/\s+/).filter(w => w.length > 0);
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
                 
-                const words = inputText.split(/\s+/).filter(w => w.length > 0);
-                const sentences = inputText.split(/[.!?]+/).filter(s => s.trim().length > 0);
-                
-                // Analyse simplifiée pour test
                 let aiScore = 0;
-                let indicators = [];
-                
-                if (inputText.toLowerCase().includes('il est important de noter')) {
-                    aiScore += 20;
-                    indicators.push('Expression typique IA détectée');
-                }
-                
-                if (words.length > 100 && sentences.length > 5) {
+                let detectedIndicators = [];
+
+                // Analyse basique
+                const lowerText = text.toLowerCase();
+                const aiPhrases = [
+                    'il est important de noter',
+                    'il convient de souligner',
+                    'en conclusion',
+                    'par ailleurs',
+                    'néanmoins',
+                    'en outre'
+                ];
+
+                aiPhrases.forEach(phrase => {
+                    if (lowerText.includes(phrase)) {
+                        aiScore += 15;
+                        detectedIndicators.push('Expression typique IA: "' + phrase + '"');
+                    }
+                });
+
+                if (words.length > 100) {
                     const avgWordsPerSentence = words.length / sentences.length;
                     if (avgWordsPerSentence > 20 && avgWordsPerSentence < 25) {
-                        aiScore += 15;
-                        indicators.push('Longueur de phrases uniforme');
+                        aiScore += 20;
+                        detectedIndicators.push('Longueur de phrases uniforme');
                     }
                 }
+
+                const finalScore = Math.min(aiScore, 85);
                 
-                return {
-                    score: Math.min(aiScore, 85),
-                    confidence: aiScore > 30 ? 'Élevée' : 'Moyenne',
-                    indicators: indicators,
-                    wordCount: words.length,
-                    sentenceCount: sentences.length
-                };
-            };
-
-            const handleAnalyze = () => {
-                setIsAnalyzing(true);
-                setTimeout(() => {
-                    const result = analyzeText(text);
-                    setAnalysis(result);
-                    setIsAnalyzing(false);
-                }, 1500);
-            };
-
-            const getScoreColor = (score) => {
-                if (score >= 60) return 'text-red-600';
-                if (score >= 30) return 'text-yellow-600';
-                return 'text-green-600';
-            };
-
-            return React.createElement('div', {
-                className: "min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4"
-            }, React.createElement('div', {
-                className: "max-w-4xl mx-auto"
-            }, 
-                React.createElement('div', {
-                    className: "text-center mb-8"
-                }, 
-                    React.createElement('div', {
-                        className: "flex items-center justify-center gap-3 mb-4"
-                    }, 
-                        React.createElement(Eye, { className: "w-8 h-8 text-blue-600" }),
-                        React.createElement('h1', {
-                            className: "text-3xl font-bold text-gray-900"
-                        }, "Détecteur de Texte IA")
-                    ),
-                    React.createElement('p', {
-                        className: "text-gray-600 max-w-2xl mx-auto"
-                    }, "Analysez vos textes pour détecter s'ils ont été générés par une intelligence artificielle."),
-                    React.createElement('div', {
-                        className: "mt-2 text-sm text-purple-600 font-medium"
-                    }, "L'Instant Opportun")
-                ),
-
-                React.createElement('div', {
-                    className: "bg-white rounded-xl shadow-lg p-6 mb-6"
-                },
-                    React.createElement('div', {
-                        className: "flex items-center gap-2 mb-4"
-                    },
-                        React.createElement(FileText, { className: "w-5 h-5 text-gray-600" }),
-                        React.createElement('h2', {
-                            className: "text-xl font-semibold text-gray-900"
-                        }, "Texte à analyser")
-                    ),
-                    React.createElement('textarea', {
-                        value: text,
-                        onChange: (e) => setText(e.target.value),
-                        placeholder: "Collez ici le texte que vous souhaitez analyser...",
-                        className: "w-full h-48 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500"
-                    }),
-                    React.createElement('div', {
-                        className: "flex justify-between items-center mt-4"
-                    },
-                        React.createElement('div', {
-                            className: "text-sm text-gray-500"
-                        }, text.split(/\s+/).filter(w => w.length > 0).length + " mots"),
-                        React.createElement('button', {
-                            onClick: handleAnalyze,
-                            disabled: !text.trim() || isAnalyzing,
-                            className: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                        }, isAnalyzing ? "Analyse en cours..." : "Analyser le texte")
-                    )
-                ),
-
-                analysis && React.createElement('div', {
-                    className: "bg-white rounded-xl shadow-lg p-6"
-                },
-                    React.createElement('div', {
-                        className: "text-center mb-6"
-                    },
-                        React.createElement('div', {
-                            className: `text-6xl font-bold ${getScoreColor(analysis.score)} mb-2`
-                        }, analysis.score + "%"),
-                        React.createElement('div', {
-                            className: "text-lg text-gray-700"
-                        }, "Probabilité de génération par IA")
-                    ),
-                    React.createElement('div', {
-                        className: "grid md:grid-cols-2 gap-6"
-                    },
-                        React.createElement('div', {},
-                            React.createElement('h3', {
-                                className: "font-semibold mb-2"
-                            }, "Statistiques"),
-                            React.createElement('p', {}, "Mots: " + analysis.wordCount),
-                            React.createElement('p', {}, "Phrases: " + analysis.sentenceCount)
-                        ),
-                        React.createElement('div', {},
-                            React.createElement('h3', {
-                                className: "font-semibold mb-2"
-                            }, "Indicateurs"),
-                            analysis.indicators.length > 0 ? 
-                                analysis.indicators.map((indicator, index) => 
-                                    React.createElement('p', { key: index, className: "text-sm text-orange-600" }, "• " + indicator)
-                                ) : 
-                                React.createElement('p', { className: "text-green-600" }, "Aucun indicateur suspect détecté")
-                        )
-                    )
-                )
-            ));
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(AITextDetector));
+                // Affichage des résultats
+                score.textContent = finalScore + '%';
+                score.className = 'score ' + (finalScore >= 60 ? 'red' : finalScore >= 30 ? 'yellow' : 'green');
+                
+                stats.innerHTML = `
+                    <p><strong>Mots:</strong> ${words.length}</p>
+                    <p><strong>Phrases:</strong> ${sentences.length}</p>
+                    <p><strong>Mots/phrase:</strong> ${Math.round(words.length / sentences.length * 10) / 10}</p>
+                `;
+                
+                if (detectedIndicators.length > 0) {
+                    indicators.innerHTML = detectedIndicators.map(ind => `<p style="color: #d97706;">• ${ind}</p>`).join('');
+                } else {
+                    indicators.innerHTML = '<p style="color: #059669;">✅ Aucun indicateur suspect détecté</p>';
+                }
+                
+                results.style.display = 'block';
+                analyzeBtn.textContent = 'Analyser le texte';
+                analyzeBtn.disabled = false;
+            }, 1000);
+        }
     </script>
 </body>
 </html>
