@@ -137,7 +137,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .icon { width: 20px; height: 20px; fill: currentColor; }
         
         /* Premium banner */
@@ -480,6 +480,7 @@
             if (code === DEVELOPER_CODE) {
                 localStorage.setItem('developerAccess', 'true');
                 isDeveloper = true;
+                updateLimitationDisplay();
                 alert('✅ Accès développeur activé ! Analyses illimitées.');
                 location.reload();
             } else if (code !== null) {
@@ -487,24 +488,45 @@
             }
         }
 
+        // Fonction pour mettre à jour l'affichage des limitations
+        function updateLimitationDisplay() {
+            const limitationBanner = document.getElementById('limitationBanner');
+            
+            if (isDeveloper) {
+                // Cacher la bannière en mode développeur
+                limitationBanner.classList.add('hidden');
+            } else if (dailyAnalysisCount >= 3) {
+                // Afficher la bannière si limite atteinte
+                limitationBanner.classList.remove('hidden');
+            } else {
+                // Cacher la bannière si pas de limite
+                limitationBanner.classList.add('hidden');
+            }
+        }
+
         // Vérifier les limites avant analyse
         function checkAnalysisLimit() {
-            if (isDeveloper) return true;
+            if (isDeveloper) {
+                updateLimitationDisplay();
+                return true;
+            }
+            
             if (dailyAnalysisCount >= 3) {
-                document.getElementById('limitationBanner').classList.remove('hidden');
+                updateLimitationDisplay();
                 return false;
             }
+            
+            updateLimitationDisplay();
             return true;
         }
 
         // Incrémenter le compteur après analyse
         function incrementAnalysisCount() {
             if (isDeveloper) return;
+            
             dailyAnalysisCount++;
             localStorage.setItem('dailyAnalysisCount', dailyAnalysisCount.toString());
-            if (dailyAnalysisCount >= 3) {
-                document.getElementById('limitationBanner').classList.remove('hidden');
-            }
+            updateLimitationDisplay();
         }
 
         // === ÉLÉMENTS DOM ===
@@ -837,7 +859,7 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'Enter') analyzeText();
-            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
                 e.preventDefault();
                 activateDeveloperAccess();
             }
@@ -864,6 +886,9 @@
         }
         updateSignupCount();
         setInterval(updateSignupCount, 30000);
+
+        // Initialisation de l'affichage
+        updateLimitationDisplay();
 
         console.log('🚀 Détecteur IA - L\'Instant Opportun | Raccourcis: Ctrl+Enter=Analyser, Ctrl+Shift+D=Dev');
     </script>
