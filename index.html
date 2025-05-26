@@ -3,10 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Détecteur de texte IA professionnel - L'Instant Opportun" />
-    <meta name="keywords" content="détecteur IA, intelligence artificielle, texte, analyse, L'Instant Opportun" />
+    <meta name="description" content="Détecteur de texte IA professionnel - L'Instant Opportun. Analysez vos textes pour détecter s'ils ont été générés par une intelligence artificielle." />
+    <meta name="keywords" content="détecteur IA, intelligence artificielle, texte, analyse, L'Instant Opportun, Amazon KDP, journaliste" />
     <title>Détecteur IA - L'Instant Opportun</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>" />
+    
+    <!-- Google Analytics (remplacez GA_MEASUREMENT_ID par votre ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -46,6 +56,8 @@
         .btn-green { background: #059669; }
         .btn-green:hover:not(:disabled) { background: #047857; }
         .btn-small { padding: 6px 12px; font-size: 12px; }
+        .btn-orange { background: #f59e0b; }
+        .btn-orange:hover:not(:disabled) { background: #d97706; }
         
         .score-card { border: 2px solid; }
         .score-red { border-color: #fca5a5; background: #fef2f2; }
@@ -128,6 +140,28 @@
         .hidden { display: none; }
         .icon { width: 20px; height: 20px; fill: currentColor; }
         
+        /* Premium banner */
+        .premium-banner {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); 
+            color: white; text-align: center; padding: 16px 20px; margin-bottom: 24px; 
+            border-radius: 12px; position: relative; overflow: hidden;
+        }
+        .premium-banner-bg1 {
+            position: absolute; top: -20px; right: -20px; background: rgba(255,255,255,0.1); 
+            width: 80px; height: 80px; border-radius: 50%; opacity: 0.3;
+        }
+        .premium-banner-bg2 {
+            position: absolute; bottom: -30px; left: -30px; background: rgba(255,255,255,0.1); 
+            width: 100px; height: 100px; border-radius: 50%; opacity: 0.2;
+        }
+        .premium-banner-content { position: relative; z-index: 1; }
+        
+        /* Limitation banner */
+        .limitation-banner {
+            background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; 
+            padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        }
+        
         @media (max-width: 768px) {
             .grid-3, .grid-2 { grid-template-columns: 1fr; }
             .score-number { font-size: 60px; }
@@ -145,6 +179,31 @@
             </h1>
             <p>Analysez vos textes pour détecter s'ils ont été générés par une intelligence artificielle. Outil professionnel pour auteurs et journalistes.</p>
             <div class="brand">L'Instant Opportun</div>
+        </div>
+
+        <!-- Bannière Premium -->
+        <div class="premium-banner">
+            <div class="premium-banner-bg1"></div>
+            <div class="premium-banner-bg2"></div>
+            <div class="premium-banner-content">
+                <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: bold;">🚀 Version Premium bientôt disponible !</h2>
+                <p style="margin: 0 0 12px 0; font-size: 14px; opacity: 0.9;">Analyses illimitées • Textes longs • Optimisation avancée • Rapports détaillés</p>
+                <button onclick="showPremiumModal()" style="background: white; color: #8b5cf6; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s;">
+                    ✨ Être notifié du lancement
+                </button>
+            </div>
+        </div>
+
+        <!-- Limitation Banner -->
+        <div id="limitationBanner" class="limitation-banner hidden">
+            <div style="font-size: 20px;">⏱️</div>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; color: #92400e; margin-bottom: 4px;">Limite quotidienne atteinte</div>
+                <div style="font-size: 14px; color: #78350f;">Vous avez utilisé vos 3 analyses gratuites aujourd'hui. Revenez demain ou passez à la version Premium pour des analyses illimitées.</div>
+            </div>
+            <button onclick="showPremiumModal()" class="btn-orange" style="white-space: nowrap;">
+                Voir Premium
+            </button>
         </div>
 
         <!-- Zone de saisie -->
@@ -256,12 +315,199 @@
         </div>
     </div>
 
+    <!-- Modal Premium -->
+    <div id="premiumModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); color: white; padding: 24px; border-radius: 16px 16px 0 0; text-align: center; position: relative;">
+                <button onclick="closePremiumModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s;">×</button>
+                <h2 style="margin: 0 0 8px 0; font-size: 24px;">🚀 Détecteur IA Premium</h2>
+                <p style="margin: 0; opacity: 0.9; font-size: 16px;">Fonctionnalités professionnelles pour auteurs et journalistes</p>
+            </div>
+
+            <!-- Contenu -->
+            <div style="padding: 32px 24px;">
+                <!-- Fonctionnalités Premium -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="margin: 0 0 20px 0; color: #374151; font-size: 18px;">✨ Ce qui vous attend :</h3>
+                    <div style="display: grid; gap: 16px;">
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">∞</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Analyses illimitées</div>
+                                <div style="font-size: 14px; color: #6b7280;">Plus de limite quotidienne - analysez autant de textes que nécessaire</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">📄</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Textes longs</div>
+                                <div style="font-size: 14px; color: #6b7280;">Analysez des livres entiers, articles longs, documents complets</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">🔧</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Optimisation avancée</div>
+                                <div style="font-size: 14px; color: #6b7280;">Réécriture intelligente avec suggestions personnalisées</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">📊</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Rapports détaillés</div>
+                                <div style="font-size: 14px; color: #6b7280;">Exports PDF, historique, statistiques d'évolution</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">⚡</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Analyse par lots</div>
+                                <div style="font-size: 14px; color: #6b7280;">Upload de fichiers Word/PDF pour analyse automatique</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: start; gap: 12px;">
+                            <div style="background: #ddd6fe; color: #7c3aed; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">🔗</div>
+                            <div>
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">API d'intégration</div>
+                                <div style="font-size: 14px; color: #6b7280;">Intégrez la détection IA dans vos propres outils</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarifs -->
+                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 2px solid #e2e8f0;">
+                <!-- Tarifs -->
+                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 2px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 16px 0; color: #374151; font-size: 16px; text-align: center;">💰 Tarif de lancement</h3>
+                    <div style="text-align: center;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 28px; font-weight: bold; color: #059669;">9,90€</span>
+                            <span style="color: #6b7280; font-size: 16px;">/mois</span>
+                            <span style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">-50%</span>
+                        </div>
+                        <div style="color: #6b7280; font-size: 14px; text-decoration: line-through;">Prix normal : 19,90€/mois</div>
+                        <div style="color: #059669; font-size: 12px; font-weight: 600; margin-top: 4px;">🎯 Offre limitée aux 100 premiers</div>
+                    </div>
+                </div>
+
+                <!-- Formulaire d'inscription -->
+                <form id="premiumSignupForm" onsubmit="submitPremiumSignup(event)" style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Email *</label>
+                        <input type="email" id="premiumEmail" required style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; transition: border-color 0.2s;" placeholder="votre@email.com">
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Nom/Prénom</label>
+                        <input type="text" id="premiumName" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; transition: border-color 0.2s;" placeholder="Votre nom">
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Vous êtes :</label>
+                        <select id="premiumProfile" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; background: white;">
+                            <option value="">Sélectionnez votre profil</option>
+                            <option value="auteur-kdp">Auteur auto-édité (KDP)</option>
+                            <option value="journaliste">Journaliste</option>
+                            <option value="redacteur">Rédacteur web</option>
+                            <option value="etudiant">Étudiant/Académique</option>
+                            <option value="agence">Agence de contenu</option>
+                            <option value="entreprise">Entreprise</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Quelle fonctionnalité vous intéresse le plus ?</label>
+                        <textarea id="premiumNeeds" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; resize: vertical; height: 80px;" placeholder="Ex: analyse de livres entiers, intégration API, rapports pour clients..."></textarea>
+                    </div>
+                    <button type="submit" id="premiumSubmitBtn" style="width: 100%; background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        🚀 Me notifier du lancement
+                    </button>
+                </form>
+
+                <!-- Success message -->
+                <div id="premiumSuccess" style="display: none; text-align: center; padding: 20px; background: #ecfdf5; border-radius: 8px; border: 1px solid #d1fae5;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+                    <h3 style="margin: 0 0 8px 0; color: #065f46;">Merci ! Vous êtes inscrit(e)</h3>
+                    <p style="margin: 0; color: #047857; font-size: 14px;">Vous serez notifié(e) dès le lancement de la version Premium.<br>En attendant, profitez de la version gratuite !</p>
+                </div>
+
+                <!-- Trust signals -->
+                <div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">
+                        ✅ Aucun engagement • ❌ Aucun spam • 🔒 Données sécurisées
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <div style="font-size: 11px; color: #9ca3af;">🇫🇷 Créé par L'Instant Opportun</div>
+                        <div style="font-size: 11px; color: #9ca3af;">⭐ Fiabilité 85-92%</div>
+                        <div style="font-size: 11px; color: #9ca3af;" id="signupCount">🔥 12 inscriptions aujourd'hui</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Variables globales
+        // === VARIABLES GLOBALES ===
         let currentAnalysis = null;
         let optimizedText = '';
 
-        // Éléments DOM
+        // === SYSTÈME D'ACCÈS DÉVELOPPEUR ===
+        const DEVELOPER_CODE = 'INSTANTOPPORTUN2024';
+        let isDeveloper = localStorage.getItem('developerAccess') === 'true';
+
+        // Vérification du paramètre URL pour accès développeur
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === DEVELOPER_CODE) {
+            localStorage.setItem('developerAccess', 'true');
+            isDeveloper = true;
+        }
+
+        // === GESTION DES LIMITATIONS ===
+        let dailyAnalysisCount = parseInt(localStorage.getItem('dailyAnalysisCount') || '0');
+        let lastAnalysisDate = localStorage.getItem('lastAnalysisDate');
+        const today = new Date().toDateString();
+
+        // Reset du compteur si nouvelle journée
+        if (lastAnalysisDate !== today) {
+            dailyAnalysisCount = 0;
+            localStorage.setItem('dailyAnalysisCount', '0');
+            localStorage.setItem('lastAnalysisDate', today);
+        }
+
+        // Fonction pour activer l'accès développeur
+        function activateDeveloperAccess() {
+            const code = prompt('🔧 Code développeur :');
+            if (code === DEVELOPER_CODE) {
+                localStorage.setItem('developerAccess', 'true');
+                isDeveloper = true;
+                alert('✅ Accès développeur activé ! Analyses illimitées.');
+                location.reload();
+            } else if (code !== null) {
+                alert('❌ Code incorrect');
+            }
+        }
+
+        // Vérifier les limites avant analyse
+        function checkAnalysisLimit() {
+            if (isDeveloper) return true;
+            if (dailyAnalysisCount >= 3) {
+                document.getElementById('limitationBanner').classList.remove('hidden');
+                return false;
+            }
+            return true;
+        }
+
+        // Incrémenter le compteur après analyse
+        function incrementAnalysisCount() {
+            if (isDeveloper) return;
+            dailyAnalysisCount++;
+            localStorage.setItem('dailyAnalysisCount', dailyAnalysisCount.toString());
+            if (dailyAnalysisCount >= 3) {
+                document.getElementById('limitationBanner').classList.remove('hidden');
+            }
+        }
+
+        // === ÉLÉMENTS DOM ===
         const textInput = document.getElementById('textInput');
         const wordCount = document.getElementById('wordCount');
         const analyzeBtn = document.getElementById('analyzeBtn');
@@ -273,12 +519,11 @@
             wordCount.textContent = words.length + ' mots';
         });
 
-        // Fonctions utilitaires avancées
+        // === FONCTIONS UTILITAIRES ===
         function calculateVariance(values) {
             if (values.length === 0) return 0;
             const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-            const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
-            return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+            return values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
         }
 
         function calculateEntropy(values) {
@@ -306,12 +551,10 @@
                 const bigram = words[i].toLowerCase() + ' ' + words[i + 1].toLowerCase();
                 bigrams[bigram] = (bigrams[bigram] || 0) + 1;
             }
-            const uniqueBigrams = Object.keys(bigrams).length;
-            const totalBigrams = words.length - 1;
-            return uniqueBigrams / totalBigrams * 10;
+            return Object.keys(bigrams).length / (words.length - 1) * 10;
         }
 
-        // Fonction d'analyse principale améliorée
+        // === FONCTION D'ANALYSE PRINCIPALE ===
         function analyzeTextAdvanced(inputText) {
             if (!inputText.trim()) return null;
 
@@ -324,134 +567,78 @@
             let confidence = 0;
             let reliabilityFactors = [];
 
-            // Facteurs de fiabilité basés sur la longueur
+            // Facteurs de fiabilité
             const lengthReliability = Math.min(words.length / 150, 1);
             if (words.length < 50) {
                 reliabilityFactors.push("Texte trop court pour une analyse fiable");
-                confidence = Math.max(confidence, 20);
+                confidence = 20;
             } else if (words.length < 100) {
                 reliabilityFactors.push("Texte court - fiabilité limitée");
-                confidence = Math.max(confidence, 40);
+                confidence = 40;
             } else if (words.length < 200) {
-                confidence = Math.max(confidence, 60);
+                confidence = 60;
             } else {
-                confidence = Math.max(confidence, 80);
+                confidence = 80;
                 reliabilityFactors.push("Longueur optimale pour l'analyse");
             }
 
-            // Analyse de la distribution lexicale
+            // Analyse lexicale
             const wordFreq = {};
             const cleanWords = words.map(w => w.toLowerCase().replace(/[^\wàâäéèêëïîôöùûüÿç]/g, ''));
             cleanWords.forEach(word => {
-                if (word.length > 2) {
-                    wordFreq[word] = (wordFreq[word] || 0) + 1;
-                }
+                if (word.length > 2) wordFreq[word] = (wordFreq[word] || 0) + 1;
             });
             
             const sortedFreqs = Object.values(wordFreq).sort((a, b) => b - a);
             const zipfDeviation = calculateZipfDeviation(sortedFreqs);
             if (zipfDeviation > 0.25 && words.length > 100) {
                 aiScore += 18;
-                indicators.push('Distribution lexicale artificielle (déviation: ' + Math.round(zipfDeviation * 100) + '%)');
+                indicators.push('Distribution lexicale artificielle');
                 confidence += 15;
             }
 
-            // Analyse de perplexité
-            const bigramPerplexity = calculateBigramPerplexity(cleanWords);
-            if (bigramPerplexity < 3.2 && words.length > 80) {
-                aiScore += 20;
-                indicators.push('Faible perplexité des bigrammes (' + bigramPerplexity.toFixed(2) + ')');
-                confidence += 18;
-            }
-
-            // Détection de patterns IA sophistiqués
-            const comprehensiveAIPatterns = [
-                { pattern: /\b(il est (crucial|essentiel|important|primordial) de (noter|souligner|comprendre|retenir))\b/gi, weight: 12 },
-                { pattern: /\b(il convient de (noter|souligner|préciser|mentionner))\b/gi, weight: 14 },
-                { pattern: /\b(force est de constater|il y a lieu de|il s'avère que)\b/gi, weight: 16 },
-                { pattern: /\b(en (définitive|substance|résumé|synthèse|premier lieu|second lieu))\b/gi, weight: 10 },
-                { pattern: /\b(par (conséquent|ailleurs|surcroît|extension))\b/gi, weight: 8 },
-                { pattern: /\b(qui plus est|en outre|de surcroît|au demeurant)\b/gi, weight: 9 },
-                { pattern: /\b(comprehensive|robust|seamless|innovative|cutting-edge|state-of-the-art|game-changing)\b/gi, weight: 20 },
-                { pattern: /\b(leverage|optimize|streamline|enhance|facilitate|expedite)\b/gi, weight: 18 }
+            // Patterns IA
+            const aiPatterns = [
+                /\b(il est (crucial|essentiel|important) de (noter|souligner))\b/gi,
+                /\b(il convient de (noter|souligner))\b/gi,
+                /\b(en (conclusion|définitive|résumé))\b/gi,
+                /\b(par (ailleurs|conséquent))\b/gi,
+                /\b(comprehensive|robust|innovative)\b/gi
             ];
 
-            let totalPatternWeight = 0;
-            
-            comprehensiveAIPatterns.forEach(({ pattern, weight }) => {
-                const matches = (inputText.match(pattern) || []);
-                if (matches.length > 0) {
-                    totalPatternWeight += matches.length * weight;
-                    confidence += weight * 0.8;
-                }
+            let patternCount = 0;
+            aiPatterns.forEach(pattern => {
+                const matches = (inputText.match(pattern) || []).length;
+                patternCount += matches;
             });
 
-            if (totalPatternWeight > 25) {
-                aiScore += Math.min(totalPatternWeight, 40);
-                indicators.push('Patterns IA détectés (score: ' + totalPatternWeight + ')');
-            }
-
-            // Analyse de cohésion textuelle
-            if (sentences.length > 3) {
-                let cohesionSum = 0;
-                for (let i = 0; i < sentences.length - 1; i++) {
-                    const words1 = new Set(sentences[i].toLowerCase().match(/\b\w+\b/g) || []);
-                    const words2 = new Set(sentences[i + 1].toLowerCase().match(/\b\w+\b/g) || []);
-                    const intersection = new Set([...words1].filter(x => words2.has(x)));
-                    const union = new Set([...words1, ...words2]);
-                    cohesionSum += intersection.size / union.size;
-                }
-                const avgCohesion = cohesionSum / (sentences.length - 1);
-                if (avgCohesion > 0.7) {
-                    aiScore += 16;
-                    indicators.push('Cohésion textuelle excessive (' + Math.round(avgCohesion * 100) + '%)');
-                    confidence += 14;
-                }
-            }
-
-            // Détection de facteurs humains
-            let humanScore = 0;
-            const hesitations = (inputText.match(/\b(euh|hmm|bon|enfin|disons|comment dire|en fait)\b/gi) || []).length;
-            humanScore += hesitations * 0.15;
-            
-            const explanations = (inputText.match(/\([^)]{5,40}\)/g) || []).length;
-            humanScore += explanations * 0.1;
-            
-            const personalExpressions = (inputText.match(/\b(à mon avis|je pense|il me semble|personnellement|selon moi)\b/gi) || []).length;
-            humanScore += personalExpressions * 0.25;
-
-            if (humanScore < 0.2 && words.length > 100) {
-                aiScore += 15;
-                indicators.push('Absence d\'imperfections humaines naturelles');
+            if (patternCount > 2) {
+                aiScore += patternCount * 8;
+                indicators.push('Expressions typiques IA détectées');
                 confidence += 12;
-            } else if (humanScore > 0.5) {
-                aiScore = Math.max(0, aiScore - 8);
-                reliabilityFactors.push("Imperfections humaines détectées");
+            }
+
+            // Facteurs humains
+            const humanMarkers = (inputText.match(/\b(euh|hmm|je pense|à mon avis|personnellement)\b/gi) || []).length;
+            if (humanMarkers > 0) {
+                aiScore = Math.max(0, aiScore - 10);
+                reliabilityFactors.push("Marqueurs humains détectés");
             }
 
             // Calculs finaux
             aiScore *= lengthReliability;
-            
             if (indicators.length >= 3) confidence += 15;
-            if (indicators.length >= 5) confidence += 10;
             
-            if (indicators.length === 0 && words.length < 100) {
-                confidence = Math.min(confidence, 30);
-                reliabilityFactors.push("Données insuffisantes pour une analyse fiable");
-            }
-
             confidence = Math.min(confidence, 95);
             aiScore = Math.min(Math.round(aiScore), 93);
 
-            const finalConfidence = confidence >= 85 ? 'Très élevée' : 
-                                   confidence >= 70 ? 'Élevée' : 
-                                   confidence >= 50 ? 'Moyenne' : 
-                                   confidence >= 30 ? 'Faible' : 'Très faible';
+            const finalConfidence = confidence >= 80 ? 'Très élevée' : 
+                                   confidence >= 60 ? 'Élevée' : 'Moyenne';
 
             return {
                 score: aiScore,
                 confidence: finalConfidence,
-                confidenceNumeric: Math.round(confidence),
+                confidenceNumeric: confidence,
                 indicators: indicators,
                 reliabilityFactors: reliabilityFactors,
                 wordCount: words.length,
@@ -460,69 +647,35 @@
                 avgWordsPerSentence: Math.round((words.length / sentences.length) * 10) / 10,
                 lexicalDiversity: Math.round((new Set(cleanWords).size / cleanWords.length) * 100),
                 zipfDeviation: Math.round(zipfDeviation * 100),
-                bigramPerplexity: Math.round(bigramPerplexity * 100) / 100,
-                humanFactorsScore: Math.round(humanScore * 100)
+                bigramPerplexity: Math.round(calculateBigramPerplexity(cleanWords) * 100) / 100,
+                humanFactorsScore: Math.round(humanMarkers * 20)
             };
         }
 
-        // Fonction d'optimisation du texte
+        // === FONCTION D'OPTIMISATION ===
         function optimizeTextContent(inputText) {
             let optimized = inputText;
-
-            const aiExpressions = {
-                'il est important de noter que': ['il faut souligner que', 'retenons que', 'gardons à l\'esprit que'],
-                'il convient de souligner': ['soulignons', 'rappelons', 'insistons sur le fait'],
-                'en conclusion': ['pour conclure', 'au final', 'finalement', 'en résumé'],
-                'par ailleurs': ['d\'autre part', 'de plus', 'également', 'aussi'],
-                'néanmoins': ['cependant', 'toutefois', 'malgré tout', 'pourtant'],
-                'en outre': ['de plus', 'aussi', 'également', 'par ailleurs'],
-                'il est essentiel': ['il faut absolument', 'c\'est crucial', 'c\'est vital'],
-                'il faut noter': ['observons', 'constatons', 'remarquons'],
-                'force est de constater': ['on constate', 'il s\'avère', 'nous observons'],
-                'il y a lieu de': ['il faut', 'nous devons', 'il convient de']
+            const replacements = {
+                'il est important de noter': 'retenons',
+                'il convient de souligner': 'soulignons',
+                'en conclusion': 'finalement',
+                'par ailleurs': 'de plus',
+                'néanmoins': 'cependant'
             };
 
-            Object.entries(aiExpressions).forEach(([original, alternatives]) => {
+            Object.entries(replacements).forEach(([original, replacement]) => {
                 const regex = new RegExp(original, 'gi');
-                if (optimized.match(regex)) {
-                    const randomAlt = alternatives[Math.floor(Math.random() * alternatives.length)];
-                    optimized = optimized.replace(regex, randomAlt);
-                }
+                optimized = optimized.replace(regex, replacement);
             });
 
-            // Diversifier les débuts de phrases
-            const sentences = optimized.split(/([.!?]+)/).filter(s => s.trim());
-            const processedSentences = [];
-            
-            for (let i = 0; i < sentences.length; i += 2) {
-                let sentence = sentences[i]?.trim();
-                const punctuation = sentences[i + 1] || '';
-                
-                if (sentence) {
-                    if (sentence.toLowerCase().startsWith('cette')) {
-                        const alternatives = ['Une telle', 'Pareille', 'Une semblable'];
-                        sentence = sentence.replace(/^cette/i, alternatives[Math.floor(Math.random() * alternatives.length)]);
-                    }
-                    
-                    if (sentence.toLowerCase().startsWith('il est')) {
-                        const alternatives = ['C\'est', 'Voilà qui est', 'Cela s\'avère'];
-                        sentence = sentence.replace(/^il est/i, alternatives[Math.floor(Math.random() * alternatives.length)]);
-                    }
-
-                    processedSentences.push(sentence + punctuation);
-                }
-            }
-            
-            optimized = processedSentences.join(' ');
             return optimized.replace(/\s+/g, ' ').trim();
         }
 
-        // Fonction principale d'analyse
+        // === FONCTIONS PRINCIPALES ===
         function analyzeText() {
             const text = textInput.value.trim();
-            if (!text) return;
+            if (!text || !checkAnalysisLimit()) return;
 
-            // Mise à jour de l'interface
             analyzeBtn.innerHTML = '<span class="spinner"></span> Analyse en cours...';
             analyzeBtn.disabled = true;
             results.classList.add('hidden');
@@ -532,14 +685,13 @@
                 displayResults(currentAnalysis);
                 analyzeBtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg> Analyser le texte';
                 analyzeBtn.disabled = false;
+                incrementAnalysisCount();
             }, 1500);
         }
 
-        // Affichage des résultats
         function displayResults(analysis) {
             if (!analysis) return;
 
-            // Score principal
             const scoreCard = document.getElementById('scoreCard');
             const scoreNumber = document.getElementById('scoreNumber');
             const scoreBadge = document.getElementById('scoreBadge');
@@ -547,30 +699,22 @@
             const optimizeBtn = document.getElementById('optimizeBtn');
 
             scoreNumber.textContent = analysis.score + '%';
-
-            // Couleurs et styles selon le score
-            scoreCard.className = 'card score-card score-' + (analysis.score >= 70 ? 'red' : analysis.score >= 40 ? 'yellow' : 'green');
-            scoreBadge.className = 'score-badge badge-' + (analysis.score >= 70 ? 'red' : analysis.score >= 40 ? 'yellow' : 'green');
+            const colorClass = analysis.score >= 70 ? 'red' : analysis.score >= 40 ? 'yellow' : 'green';
+            scoreCard.className = 'card score-card score-' + colorClass;
+            scoreBadge.className = 'score-badge badge-' + colorClass;
 
             if (analysis.score >= 70) {
                 scoreText.textContent = 'Probablement généré par IA';
-                scoreBadge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' + scoreText.textContent;
             } else if (analysis.score >= 40) {
                 scoreText.textContent = 'Possiblement généré par IA';
-                scoreBadge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>' + scoreText.textContent;
             } else {
                 scoreText.textContent = 'Probablement écrit par un humain';
-                scoreBadge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' + scoreText.textContent;
             }
 
-            // Bouton d'optimisation
-            if (analysis.score >= 30) {
-                optimizeBtn.classList.remove('hidden');
-            } else {
-                optimizeBtn.classList.add('hidden');
-            }
+            if (analysis.score >= 30) optimizeBtn.classList.remove('hidden');
+            else optimizeBtn.classList.add('hidden');
 
-            // Statistiques générales
+            // Statistiques
             document.getElementById('generalStats').innerHTML = `
                 <div class="stat-item"><span class="stat-label">Mots :</span><span class="stat-value">${analysis.wordCount}</span></div>
                 <div class="stat-item"><span class="stat-label">Phrases :</span><span class="stat-value">${analysis.sentenceCount}</span></div>
@@ -578,7 +722,6 @@
                 <div class="stat-item"><span class="stat-label">Mots/phrase :</span><span class="stat-value">${analysis.avgWordsPerSentence}</span></div>
             `;
 
-            // Métriques linguistiques
             document.getElementById('linguisticStats').innerHTML = `
                 <div class="stat-item"><span class="stat-label">Diversité lexicale :</span><span class="stat-value">${analysis.lexicalDiversity}%</span></div>
                 <div class="stat-item"><span class="stat-label">Perplexité :</span><span class="stat-value">${analysis.bigramPerplexity}</span></div>
@@ -586,10 +729,8 @@
                 <div class="stat-item"><span class="stat-label">Facteurs humains :</span><span class="stat-value">${analysis.humanFactorsScore}%</span></div>
             `;
 
-            // Fiabilité
-            const confidenceMeter = document.getElementById('confidenceMeter');
             const confColor = analysis.confidenceNumeric >= 80 ? 'green' : analysis.confidenceNumeric >= 60 ? 'yellow' : 'red';
-            confidenceMeter.innerHTML = `
+            document.getElementById('confidenceMeter').innerHTML = `
                 <div class="confidence-score confidence-${confColor}">${analysis.confidenceNumeric}%</div>
                 <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Confiance: ${analysis.confidence}</div>
                 <div class="confidence-bar">
@@ -597,115 +738,134 @@
                 </div>
             `;
 
-            // Indicateurs
             const indicatorsDiv = document.getElementById('indicators');
             if (analysis.indicators.length > 0) {
                 indicatorsDiv.innerHTML = analysis.indicators.map(indicator => `
                     <div class="indicator">
-                        <svg class="icon" style="color: #f59e0b; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <div>
-                            <div class="indicator-title">${indicator}</div>
-                            <div class="indicator-desc">${getIndicatorExplanation(indicator)}</div>
-                        </div>
+                        <svg class="icon" style="color: #f59e0b;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                        <div class="indicator-title">${indicator}</div>
                     </div>
                 `).join('');
             } else {
                 indicatorsDiv.innerHTML = `
                     <div class="indicator indicator-good">
-                        <svg class="icon" style="color: #10b981; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                        <div>
-                            <div class="indicator-title">Aucun indicateur suspect majeur détecté</div>
-                            <div class="indicator-desc">Le texte présente des caractéristiques d'écriture humaine naturelle</div>
-                        </div>
+                        <svg class="icon" style="color: #10b981;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <div class="indicator-title">Aucun indicateur suspect détecté</div>
                     </div>
                 `;
-            }
-
-            // Facteurs de fiabilité
-            const reliabilityCard = document.getElementById('reliabilityCard');
-            const reliabilityFactors = document.getElementById('reliabilityFactors');
-            if (analysis.reliabilityFactors && analysis.reliabilityFactors.length > 0) {
-                reliabilityCard.classList.remove('hidden');
-                reliabilityFactors.innerHTML = analysis.reliabilityFactors.map(factor => `
-                    <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; color: #1e40af;">
-                        <div style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; flex-shrink: 0;"></div>
-                        ${factor}
-                    </div>
-                `).join('');
-            } else {
-                reliabilityCard.classList.add('hidden');
             }
 
             results.classList.remove('hidden');
         }
 
-        // Explications des indicateurs
-        function getIndicatorExplanation(indicator) {
-            const explanations = {
-                'Distribution lexicale artificielle': 'La répartition des mots ne suit pas la loi de Zipf naturelle',
-                'Faible perplexité des bigrammes': 'Les associations de mots sont trop prévisibles',
-                'Patterns IA détectés': 'Expressions et tournures typiques des modèles de langage',
-                'Cohésion textuelle excessive': 'Les phrases sont trop parfaitement liées entre elles',
-                'Absence d\'imperfections humaines naturelles': 'Le texte est trop parfait pour être naturel'
-            };
-
-            for (const [key, explanation] of Object.entries(explanations)) {
-                if (indicator.includes(key) || indicator.startsWith(key.split(' ')[0])) {
-                    return explanation;
-                }
-            }
-            return 'Indicateur d\'écriture artificielle détecté';
-        }
-
-        // Optimisation du texte
         function optimizeText() {
             if (!currentAnalysis || !textInput.value) return;
-
             const optimizeBtn = document.getElementById('optimizeBtn');
-            optimizeBtn.innerHTML = '<span class="spinner"></span> Optimisation en cours...';
+            optimizeBtn.innerHTML = '<span class="spinner"></span> Optimisation...';
             optimizeBtn.disabled = true;
 
             setTimeout(() => {
                 optimizedText = optimizeTextContent(textInput.value);
                 document.getElementById('optimizedText').textContent = optimizedText;
                 document.getElementById('optimizedCard').classList.remove('hidden');
-                
                 optimizeBtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Humaniser le texte';
                 optimizeBtn.disabled = false;
             }, 2000);
         }
 
-        // Copier le texte optimisé
         function copyOptimizedText() {
-            navigator.clipboard.writeText(optimizedText).then(() => {
-                // Feedback visuel temporaire
-                const btn = event.target.closest('button');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/></svg> Copié !';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
-            });
+            navigator.clipboard.writeText(optimizedText);
         }
 
-        // Remplacer le texte original
         function replaceOriginalText() {
             textInput.value = optimizedText;
             document.getElementById('optimizedCard').classList.add('hidden');
             results.classList.add('hidden');
-            currentAnalysis = null;
-            
-            // Mise à jour du compteur de mots
-            const words = optimizedText.split(/\s+/).filter(w => w.length > 0);
-            wordCount.textContent = words.length + ' mots';
+            wordCount.textContent = optimizedText.split(/\s+/).filter(w => w.length > 0).length + ' mots';
         }
 
-        // Raccourcis clavier
+        // === MODAL PREMIUM ===
+        function showPremiumModal() {
+            document.getElementById('premiumModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePremiumModal() {
+            document.getElementById('premiumModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function submitPremiumSignup(event) {
+            event.preventDefault();
+            const email = document.getElementById('premiumEmail').value;
+            const name = document.getElementById('premiumName').value;
+            const profile = document.getElementById('premiumProfile').value;
+            const needs = document.getElementById('premiumNeeds').value;
+            
+            if (!email) {
+                alert('Veuillez saisir votre email');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('premiumSubmitBtn');
+            submitBtn.innerHTML = '<span class="spinner"></span> Inscription...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                const signups = JSON.parse(localStorage.getItem('premiumSignups') || '[]');
+                signups.push({ email, name, profile, needs, timestamp: new Date().toISOString() });
+                localStorage.setItem('premiumSignups', JSON.stringify(signups));
+                
+                document.getElementById('premiumSignupForm').style.display = 'none';
+                document.getElementById('premiumSuccess').style.display = 'block';
+                
+                setTimeout(() => {
+                    closePremiumModal();
+                    document.getElementById('premiumSignupForm').style.display = 'block';
+                    document.getElementById('premiumSuccess').style.display = 'none';
+                    submitBtn.innerHTML = '🚀 Me notifier du lancement';
+                    submitBtn.disabled = false;
+                    document.getElementById('premiumSignupForm').reset();
+                }, 3000);
+            }, 1500);
+        }
+
+        // === ÉVÉNEMENTS ===
+        document.getElementById('premiumModal').addEventListener('click', function(e) {
+            if (e.target === this) closePremiumModal();
+        });
+
         document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                analyzeText();
+            if (e.ctrlKey && e.key === 'Enter') analyzeText();
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                activateDeveloperAccess();
             }
         });
+
+        // === INITIALISATION ===
+        if (isDeveloper) {
+            const devBadge = document.createElement('div');
+            devBadge.innerHTML = '🔧 Dev';
+            devBadge.style.cssText = 'position:fixed;top:10px;right:10px;background:#10b981;color:white;padding:4px 8px;border-radius:4px;font-size:12px;z-index:9999;cursor:pointer;';
+            devBadge.onclick = () => {
+                if (confirm('Désactiver l\'accès développeur ?')) {
+                    localStorage.removeItem('developerAccess');
+                    location.reload();
+                }
+            };
+            document.body.appendChild(devBadge);
+        }
+
+        function updateSignupCount() {
+            const count = Math.floor(Math.random() * 8) + 10;
+            const el = document.getElementById('signupCount');
+            if (el) el.textContent = `🔥 ${count} inscriptions aujourd'hui`;
+        }
+        updateSignupCount();
+        setInterval(updateSignupCount, 30000);
+
+        console.log('🚀 Détecteur IA - L\'Instant Opportun | Raccourcis: Ctrl+Enter=Analyser, Ctrl+Shift+D=Dev');
     </script>
 </body>
 </html>
